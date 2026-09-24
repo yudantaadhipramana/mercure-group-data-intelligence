@@ -4,3 +4,5 @@
 *.zip
 dashboard/dist/
 dashboard/node_modules/
+*.duckdb
+*.db

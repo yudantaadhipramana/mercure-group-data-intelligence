@@ -1,0 +1,616 @@
+{
+  "pms": {
+    "source": "pms",
+    "rows": 142410,
+    "columns": 13,
+    "column_names": [
+      "booking_id",
+      "property",
+      "booking_date",
+      "check_in",
+      "check_out",
+      "room_type",
+      "guest_segment",
+      "booking_channel",
+      "room_rate",
+      "room_revenue",
+      "cancellation_status",
+      "payment_status",
+      "prop_code"
+    ],
+    "missing": {
+      "booking_id": 0,
+      "property": 0,
+      "booking_date": 0,
+      "check_in": 0,
+      "check_out": 0,
+      "room_type": 0,
+      "guest_segment": 2753,
+      "booking_channel": 2822,
+      "room_rate": 0,
+      "room_revenue": 0,
+      "cancellation_status": 0,
+      "payment_status": 0,
+      "prop_code": 142410
+    },
+    "missing_pct": {
+      "booking_id": 0.0,
+      "property": 0.0,
+      "booking_date": 0.0,
+      "check_in": 0.0,
+      "check_out": 0.0,
+      "room_type": 0.0,
+      "guest_segment": 1.93,
+      "booking_channel": 1.98,
+      "room_rate": 0.0,
+      "room_revenue": 0.0,
+      "cancellation_status": 0.0,
+      "payment_status": 0.0,
+      "prop_code": 100.0
+    },
+    "distinct": {
+      "booking_id": 136267,
+      "property": 119,
+      "booking_date": 730,
+      "check_in": 744,
+      "check_out": 749,
+      "room_type": 15,
+      "guest_segment": 18,
+      "booking_channel": 20,
+      "room_rate": 2305,
+      "room_revenue": 2303,
+      "cancellation_status": 3,
+      "payment_status": 3,
+      "prop_code": 0
+    },
+    "duplicate_rows": 6143,
+    "numeric_summary": {
+      "room_rate": {
+        "count": 142410.0,
+        "mean": 1697228.1862228776,
+        "std": 525180.91736884,
+        "min": 960000.0,
+        "25%": 1303000.0,
+        "50%": 1593000.0,
+        "75%": 1954000.0,
+        "max": 4295000.0
+      },
+      "room_revenue": {
+        "count": 142410.0,
+        "mean": 1551916.4805842286,
+        "std": 691193.7577508023,
+        "min": 0.0,
+        "25%": 1233000.0,
+        "50%": 1551000.0,
+        "75%": 1910000.0,
+        "max": 4295000.0
+      }
+    },
+    "dirty_findings": [
+      {
+        "rule": "PROPERTY_ALIAS",
+        "detail": "119 distinct property strings (expected \u226411)",
+        "records_affected": 142410
+      },
+      {
+        "rule": "DUPLICATE_ID",
+        "key": "booking_id",
+        "records_affected": 6143
+      },
+      {
+        "rule": "CHECKOUT_BEFORE_CHECKIN",
+        "records_affected": 586
+      }
+    ]
+  },
+  "pos": {
+    "source": "pos",
+    "rows": 1411013,
+    "columns": 13,
+    "column_names": [
+      "transaction_id",
+      "transaction_date",
+      "outlet",
+      "product_code",
+      "product_name",
+      "category",
+      "quantity",
+      "gross_sales",
+      "discount",
+      "net_sales",
+      "payment_method",
+      "void_flag",
+      "refund_flag"
+    ],
+    "missing": {
+      "transaction_id": 0,
+      "transaction_date": 0,
+      "outlet": 0,
+      "product_code": 0,
+      "product_name": 0,
+      "category": 0,
+      "quantity": 0,
+      "gross_sales": 0,
+      "discount": 18130,
+      "net_sales": 0,
+      "payment_method": 0,
+      "void_flag": 0,
+      "refund_flag": 0
+    },
+    "missing_pct": {
+      "transaction_id": 0.0,
+      "transaction_date": 0.0,
+      "outlet": 0.0,
+      "product_code": 0.0,
+      "product_name": 0.0,
+      "category": 0.0,
+      "quantity": 0.0,
+      "gross_sales": 0.0,
+      "discount": 1.28,
+      "net_sales": 0.0,
+      "payment_method": 0.0,
+      "void_flag": 0.0,
+      "refund_flag": 0.0
+    },
+    "distinct": {
+      "transaction_id": 558298,
+      "transaction_date": 730,
+      "outlet": 21,
+      "product_code": 58,
+      "product_name": 257,
+      "category": 28,
+      "quantity": 6,
+      "gross_sales": 164,
+      "discount": 394048,
+      "net_sales": 467504,
+      "payment_method": 22,
+      "void_flag": 2,
+      "refund_flag": 2
+    },
+    "duplicate_rows": 15190,
+    "numeric_summary": {
+      "quantity": {
+        "count": 1411013.0,
+        "mean": 1.9281020089821994,
+        "std": 0.9730644741799568,
+        "min": -3.0,
+        "25%": 1.0,
+        "50%": 2.0,
+        "75%": 3.0,
+        "max": 3.0
+      },
+      "gross_sales": {
+        "count": 1411013.0,
+        "mean": 117741.08601409059,
+        "std": 96814.61563601396,
+        "min": -495000.0,
+        "25%": 55000.0,
+        "50%": 90000.0,
+        "75%": 164000.0,
+        "max": 495000.0
+      },
+      "discount": {
+        "count": 1392883.0,
+        "mean": 1881.8781102432868,
+        "std": 3815.2106121088323,
+        "min": -33349.74,
+        "25%": 0.0,
+        "50%": 0.0,
+        "75%": 2564.79,
+        "max": 33411.46
+      },
+      "net_sales": {
+        "count": 1411013.0,
+        "mean": 116135.719040753,
+        "std": 90653.39271136174,
+        "min": 0.0,
+        "25%": 52599.92,
+        "50%": 90000.0,
+        "75%": 156000.0,
+        "max": 495000.0
+      }
+    },
+    "dirty_findings": [
+      {
+        "rule": "PRODUCT_ALIAS",
+        "detail": "257 distinct product strings (expected \u226460)",
+        "records_affected": 1411013
+      },
+      {
+        "rule": "INVALID_CATEGORY",
+        "values": [
+          "APPETIZER",
+          "BEVERAGE",
+          "BREAKFAST",
+          "COFFEE",
+          "DESSERT",
+          "MAIN COURSE",
+          "RICE & NOODLES",
+          "SNACK",
+          "TEA",
+          "appetizer"
+        ],
+        "records_affected": 702044
+      },
+      {
+        "rule": "DUPLICATE_ID",
+        "key": "transaction_id",
+        "records_affected": 852715
+      },
+      {
+        "rule": "NEGATIVE_QTY",
+        "column": "quantity",
+        "records_affected": 25131
+      }
+    ]
+  },
+  "finance": {
+    "source": "finance",
+    "rows": 7499,
+    "columns": 8,
+    "column_names": [
+      "transaction_id",
+      "transaction_date",
+      "property",
+      "account_code",
+      "account_name",
+      "department",
+      "amount",
+      "transaction_type"
+    ],
+    "missing": {
+      "transaction_id": 0,
+      "transaction_date": 0,
+      "property": 0,
+      "account_code": 0,
+      "account_name": 0,
+      "department": 0,
+      "amount": 0,
+      "transaction_type": 0
+    },
+    "missing_pct": {
+      "transaction_id": 0.0,
+      "transaction_date": 0.0,
+      "property": 0.0,
+      "account_code": 0.0,
+      "account_name": 0.0,
+      "department": 0.0,
+      "amount": 0.0,
+      "transaction_type": 0.0
+    },
+    "distinct": {
+      "transaction_id": 7423,
+      "transaction_date": 24,
+      "property": 32,
+      "account_code": 59,
+      "account_name": 106,
+      "department": 21,
+      "amount": 7423,
+      "transaction_type": 2
+    },
+    "duplicate_rows": 74,
+    "numeric_summary": {
+      "amount": {
+        "count": 7499.0,
+        "mean": 182055663.83663955,
+        "std": 194649108.6040219,
+        "min": 20202360.79,
+        "25%": 53161811.3,
+        "50%": 82408164.01,
+        "75%": 277785251.545,
+        "max": 1259456030.45
+      }
+    },
+    "dirty_findings": [
+      {
+        "rule": "PROPERTY_ALIAS",
+        "detail": "32 distinct property strings (expected \u226411)",
+        "records_affected": 7499
+      },
+      {
+        "rule": "DUPLICATE_ID",
+        "key": "transaction_id",
+        "records_affected": 76
+      }
+    ]
+  },
+  "inventory": {
+    "source": "inventory",
+    "rows": 151777,
+    "columns": 11,
+    "column_names": [
+      "inventory_date",
+      "property",
+      "product_code",
+      "product_name",
+      "opening_stock",
+      "purchase_qty",
+      "transfer_qty",
+      "consumption_qty",
+      "waste_qty",
+      "closing_stock",
+      "stock_value"
+    ],
+    "missing": {
+      "inventory_date": 0,
+      "property": 0,
+      "product_code": 0,
+      "product_name": 0,
+      "opening_stock": 0,
+      "purchase_qty": 0,
+      "transfer_qty": 4554,
+      "consumption_qty": 0,
+      "waste_qty": 0,
+      "closing_stock": 0,
+      "stock_value": 0
+    },
+    "missing_pct": {
+      "inventory_date": 0.0,
+      "property": 0.0,
+      "product_code": 0.0,
+      "product_name": 0.0,
+      "opening_stock": 0.0,
+      "purchase_qty": 0.0,
+      "transfer_qty": 3.0,
+      "consumption_qty": 0.0,
+      "waste_qty": 0.0,
+      "closing_stock": 0.0,
+      "stock_value": 0.0
+    },
+    "distinct": {
+      "inventory_date": 730,
+      "property": 31,
+      "product_code": 23,
+      "product_name": 107,
+      "opening_stock": 3054,
+      "purchase_qty": 1688,
+      "transfer_qty": 1,
+      "consumption_qty": 73,
+      "waste_qty": 12,
+      "closing_stock": 3037,
+      "stock_value": 151079
+    },
+    "duplicate_rows": 667,
+    "numeric_summary": {
+      "opening_stock": {
+        "count": 151777.0,
+        "mean": 142.06874427614198,
+        "std": 52.44691070923094,
+        "min": 28.9,
+        "25%": 101.2,
+        "50%": 136.5,
+        "75%": 176.4,
+        "max": 413.2
+      },
+      "purchase_qty": {
+        "count": 151777.0,
+        "mean": 15.251961759686909,
+        "std": 44.80362758224703,
+        "min": 0.0,
+        "25%": 0.0,
+        "50%": 0.0,
+        "75%": 0.0,
+        "max": 327.8
+      },
+      "transfer_qty": {
+        "count": 147223.0,
+        "mean": 0.0,
+        "std": 0.0,
+        "min": 0.0,
+        "25%": 0.0,
+        "50%": 0.0,
+        "75%": 0.0,
+        "max": 0.0
+      },
+      "consumption_qty": {
+        "count": 151777.0,
+        "mean": 14.674482958551032,
+        "std": 5.449869957128677,
+        "min": -31.0,
+        "25%": 11.0,
+        "50%": 14.0,
+        "75%": 18.0,
+        "max": 44.0
+      },
+      "waste_qty": {
+        "count": 151777.0,
+        "mean": 0.22199542750219067,
+        "std": 0.15902364714475475,
+        "min": 0.0,
+        "25%": 0.1,
+        "50%": 0.2,
+        "75%": 0.3,
+        "max": 1.1
+      },
+      "closing_stock": {
+        "count": 151777.0,
+        "mean": 142.24961621326025,
+        "std": 52.402550277551335,
+        "min": 28.9,
+        "25%": 101.4,
+        "50%": 136.7,
+        "75%": 176.6,
+        "max": 413.2
+      },
+      "stock_value": {
+        "count": 151777.0,
+        "mean": 2420536.1664712043,
+        "std": 1976694.568202993,
+        "min": 134064.19,
+        "25%": 1014370.24,
+        "50%": 1840371.45,
+        "75%": 3235411.39,
+        "max": 18753003.78
+      }
+    },
+    "dirty_findings": [
+      {
+        "rule": "PROPERTY_ALIAS",
+        "detail": "31 distinct property strings (expected \u226411)",
+        "records_affected": 151777
+      },
+      {
+        "rule": "PRODUCT_ALIAS",
+        "detail": "107 distinct product strings (expected \u226460)",
+        "records_affected": 151777
+      },
+      {
+        "rule": "NEGATIVE_QTY",
+        "column": "consumption_qty",
+        "records_affected": 895
+      }
+    ]
+  },
+  "procurement": {
+    "source": "procurement",
+    "rows": 16813,
+    "columns": 9,
+    "column_names": [
+      "purchase_id",
+      "purchase_date",
+      "supplier",
+      "property",
+      "product_code",
+      "product_name",
+      "quantity",
+      "unit_price",
+      "total_amount"
+    ],
+    "missing": {
+      "purchase_id": 0,
+      "purchase_date": 0,
+      "supplier": 0,
+      "property": 0,
+      "product_code": 0,
+      "product_name": 0,
+      "quantity": 0,
+      "unit_price": 0,
+      "total_amount": 0
+    },
+    "missing_pct": {
+      "purchase_id": 0.0,
+      "purchase_date": 0.0,
+      "supplier": 0.0,
+      "property": 0.0,
+      "product_code": 0.0,
+      "product_name": 0.0,
+      "quantity": 0.0,
+      "unit_price": 0.0,
+      "total_amount": 0.0
+    },
+    "distinct": {
+      "purchase_id": 16628,
+      "purchase_date": 730,
+      "supplier": 42,
+      "property": 31,
+      "product_code": 23,
+      "product_name": 107,
+      "quantity": 2951,
+      "unit_price": 9928,
+      "total_amount": 16524
+    },
+    "duplicate_rows": 185,
+    "numeric_summary": {
+      "quantity": {
+        "count": 16813.0,
+        "mean": 563.6687325284006,
+        "std": 624.2078191812768,
+        "min": 52.3,
+        "25%": 126.5,
+        "50%": 160.0,
+        "75%": 1171.0,
+        "max": 3278.0
+      },
+      "unit_price": {
+        "count": 16813.0,
+        "mean": 16741.753404508418,
+        "std": 10551.52093393336,
+        "min": 3600.0,
+        "25%": 8615.18,
+        "50%": 14991.51,
+        "75%": 20505.9,
+        "max": 57934.13
+      },
+      "total_amount": {
+        "count": 16813.0,
+        "mean": 9326625.191894962,
+        "std": 13311136.045675589,
+        "min": 257382.2,
+        "25%": 1618447.64,
+        "50%": 3005865.35,
+        "75%": 12481407.15,
+        "max": 114257483.75
+      }
+    },
+    "dirty_findings": [
+      {
+        "rule": "PROPERTY_ALIAS",
+        "detail": "31 distinct property strings (expected \u226411)",
+        "records_affected": 16813
+      },
+      {
+        "rule": "PRODUCT_ALIAS",
+        "detail": "107 distinct product strings (expected \u226460)",
+        "records_affected": 16813
+      },
+      {
+        "rule": "DUPLICATE_ID",
+        "key": "purchase_id",
+        "records_affected": 185
+      }
+    ]
+  },
+  "budget": {
+    "source": "budget",
+    "rows": 7185,
+    "columns": 5,
+    "column_names": [
+      "period",
+      "property",
+      "department",
+      "account",
+      "budget_amount"
+    ],
+    "missing": {
+      "period": 0,
+      "property": 0,
+      "department": 0,
+      "account": 0,
+      "budget_amount": 0
+    },
+    "missing_pct": {
+      "period": 0.0,
+      "property": 0.0,
+      "department": 0.0,
+      "account": 0.0,
+      "budget_amount": 0.0
+    },
+    "distinct": {
+      "period": 48,
+      "property": 32,
+      "department": 21,
+      "account": 112,
+      "budget_amount": 600
+    },
+    "duplicate_rows": 0,
+    "numeric_summary": {
+      "budget_amount": {
+        "count": 7185.0,
+        "mean": 897601619.0252109,
+        "std": 1675013974.9090273,
+        "min": 32268516.07,
+        "25%": 53956808.64,
+        "50%": 79569008.64,
+        "75%": 481803348.79,
+        "max": 8460034924.91
+      }
+    },
+    "dirty_findings": [
+      {
+        "rule": "PROPERTY_ALIAS",
+        "detail": "32 distinct property strings (expected \u226411)",
+        "records_affected": 7185
+      }
+    ]
+  }
+}

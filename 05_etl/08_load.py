@@ -87,7 +87,7 @@ CREATE TABLE fact_inventory (
     date_id INTEGER, property_id VARCHAR, product_id VARCHAR,
     opening_stock DOUBLE, purchase_qty DOUBLE, transfer_qty DOUBLE,
     consumption_qty DOUBLE, waste_qty DOUBLE, closing_stock DOUBLE,
-    unit_cost DOUBLE, stock_value DOUBLE, inventory_variance DOUBLE,
+    stock_value DOUBLE,
     PRIMARY KEY (date_id, property_id, product_id));
 CREATE TABLE fact_purchase (
     purchase_line_id VARCHAR PRIMARY KEY, date_id INTEGER, property_id VARCHAR,
@@ -153,6 +153,11 @@ def main():
     for f in sorted(glob.glob(os.path.join(M, "dim_*.parquet")) + glob.glob(os.path.join(M, "map_*.parquet"))):
         tbl = os.path.basename(f)[:-8]
         df = pd.read_parquet(f)
+        if tbl == "dim_product" and "category" in df.columns:
+            df = df.drop(columns=["category"])
+        # ensure active_flag exists for dim_product
+        if tbl == "dim_product" and "active_flag" not in df.columns:
+            df["active_flag"] = 1
         c.register("_tmp", df)
         c.execute(f"INSERT INTO {tbl} SELECT * FROM _tmp")
         c.unregister("_tmp")
@@ -166,12 +171,28 @@ def main():
         "fact_inventory": "clean_inventory.parquet",
         "fact_purchase": "clean_procurement.parquet",
     }
+    fact_cols = {
+        "fact_room_sales": ["booking_id", "date_id", "property_id", "room_type_id", "segment_id",
+                            "channel_id", "los", "rooms_sold", "room_nights", "room_revenue",
+                            "room_rate", "is_cancelled", "is_no_show", "_source_file", "_raw_row"],
+        "fact_fnb_sales": ["transaction_id", "line_no", "date_id", "property_id", "outlet_name",
+                           "product_id", "category_clean", "quantity", "gross_sales", "discount",
+                           "net_sales", "unit_price", "cogs_amount", "gross_profit", "is_void",
+                           "is_refund", "_source_file", "_raw_row"],
+        "fact_inventory": ["date_id", "property_id", "product_id", "opening_stock", "purchase_qty",
+                           "transfer_qty", "consumption_qty", "waste_qty", "closing_stock",
+                           "stock_value"],
+        "fact_purchase": ["purchase_line_id", "date_id", "property_id", "product_id", "supplier_id",
+                          "quantity", "unit_price", "total_amount"],
+    }
     for tbl, fn in facts.items():
         p = os.path.join(C, fn)
         if not os.path.exists(p):
             print(f"[08] MISSING {p}")
             continue
         df = pd.read_parquet(p)
+        cols = fact_cols[tbl]
+        df = df[[c for c in cols if c in df.columns]]
         c.register("_tmp", df)
         c.execute(f"INSERT INTO {tbl} SELECT * FROM _tmp")
         c.unregister("_tmp")
@@ -182,10 +203,11 @@ def main():
     if os.path.exists(p):
         df = pd.read_parquet(p)
         df["is_cogs"] = 0
+        df["expense_id"] = df["transaction_id"] + "-" + df.groupby("transaction_id").cumcount().astype(str)
         c.register("_tmp", df)
         c.execute("""INSERT INTO fact_expense
-                     SELECT transaction_id, date_id, property_id, department_id, account_id,
-                            amount, transaction_type, is_cogs, source_file, raw_row
+                     SELECT expense_id, date_id, property_id, department_id, account_id,
+                            amount, transaction_type, is_cogs, _source_file, _raw_row
                      FROM _tmp""")
         c.unregister("_tmp")
         print(f"[08] fact_expense: {len(df):,} rows")
@@ -209,7 +231,7 @@ def main():
         df["log_id"] = df.index + 1
         c.register("_tmp", df)
         c.execute("""INSERT INTO etl_cleansing_log
-                     SELECT log_id, rule, source, records_affected, before_example, after_example
+                     SELECT log_id, rule, source, records_affected, before, after
                      FROM _tmp""")
         c.unregister("_tmp")
         print(f"[08] etl_cleansing_log: {len(df):,} rows")
