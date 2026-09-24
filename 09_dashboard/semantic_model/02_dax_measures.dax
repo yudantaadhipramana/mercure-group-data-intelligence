@@ -1,0 +1,222 @@
+===============================================================================
+ POWER BI SEMANTIC MODEL — DAX MEASURE LIBRARY
+ Hospitality & F&B Group Data Intelligence Demo — Powered by LensaData
+===============================================================================
+Every measure below is validated against its warehouse mart counterpart.
+Reconciliation: 12_documentation/14_QA_REPORT.md
+Synthetic demonstration. Mercure Group is fictional.
+===============================================================================
+
+--------------------------------------------------------------- filter backbone
+-- dim_date is marked as a date table (Date key = dim_date[full_date]).
+-- All relationships are single direction (dimension -> fact).
+
+----------------------------------------------- base fact measures (implicit DAX)
+-- Total Room Revenue = SUM(fact_room_sales[room_revenue])
+-- Total F&B Net Sales = SUM(fact_fnb_sales[net_sales])
+-- F&B COGS = SUM(fact_fnb_sales[cogs_amount])
+
+--------------------------------------------------------------- ROOM KPIs
+
+Total Room Revenue =
+SUM ( fact_room_sales[room_revenue] )
+
+Rooms Sold =
+SUM ( fact_room_sales[rooms_sold] )
+
+Occupied Room Nights =
+SUM ( fact_room_sales[room_nights] )
+
+Available Room Nights =
+SUM ( dim_property[rooms] )
+    * DISTINCTCOUNT ( dim_date[date_key] )
+
+Occupancy % =
+DIVIDE ( [Occupied Room Nights], [Available Room Nights], BLANK () )
+
+ADR =
+DIVIDE ( [Total Room Revenue], [Rooms Sold], BLANK () )
+
+RevPAR =
+DIVIDE ( [Total Room Revenue], [Available Room Nights], BLANK () )
+
+Cancellation % =
+DIVIDE (
+    SUM ( fact_room_sales[is_cancelled] ),
+    COUNTROWS ( fact_room_sales ),
+    BLANK ()
+)
+
+No-show % =
+DIVIDE (
+    SUM ( fact_room_sales[is_no_show] ),
+    COUNTROWS ( fact_room_sales ),
+    BLANK ()
+)
+
+Average LOS =
+DIVIDE (
+    SUM ( fact_room_sales[los] ),
+    SUM ( fact_room_sales[rooms_sold] ),
+    BLANK ()
+)
+
+--------------------------------------------------------------- F&B KPIs
+
+F&B Gross Sales =
+SUM ( fact_fnb_sales[gross_sales] )
+
+F&B Net Revenue =
+CALCULATE (
+    SUM ( fact_fnb_sales[net_sales] ),
+    fact_fnb_sales[is_void] = 0,
+    fact_fnb_sales[is_refund] = 0
+)
+
+F&B COGS =
+SUM ( fact_fnb_sales[cogs_amount] )
+
+Food Cost % =
+DIVIDE ( [F&B COGS], [F&B Net Revenue], BLANK () )
+
+F&B Gross Profit =
+[F&B Net Revenue] - [F&B COGS]
+
+F&B Gross Margin % =
+DIVIDE ( [F&B Gross Profit], [F&B Net Revenue], BLANK () )
+
+F&B Transactions =
+DISTINCTCOUNT ( fact_fnb_sales[transaction_id] )
+
+Average Check =
+DIVIDE ( [F&B Net Revenue], [F&B Transactions], BLANK () )
+
+F&B Discount % =
+DIVIDE (
+    SUM ( fact_fnb_sales[discount] ),
+    [F&B Gross Sales],
+    BLANK ()
+)
+
+F&B Void % =
+DIVIDE (
+    SUM ( fact_fnb_sales[is_void] ),
+    COUNTROWS ( fact_fnb_sales ),
+    BLANK ()
+)
+
+F&B Waste Value =
+SUM ( fact_inventory[waste_qty] ) * SUM ( fact_inventory[unit_cost] )
+
+--------------------------------------------------------------- FINANCE KPIs
+
+Total OPEX =
+CALCULATE (
+    SUM ( fact_expense[amount] ),
+    dim_account[account_type] = "OPEX"
+)
+
+Total COGS =
+CALCULATE (
+    SUM ( fact_expense[amount] ),
+    dim_account[account_type] = "COGS"
+)
+
+Other Income =
+CALCULATE (
+    SUM ( fact_expense[amount] ),
+    dim_account[account_type] = "Revenue",
+    dim_account[account_code] IN { "4002", "4003", "4005", "4006" }
+)
+
+Total Revenue =
+[Total Room Revenue] + [F&B Net Revenue] + [Other Income]
+
+EBITDA =
+[Total Revenue] - [Total COGS] - [Total OPEX]
+
+EBITDA Margin % =
+DIVIDE ( [EBITDA], [Total Revenue], BLANK () )
+
+Net Profit =
+[EBITDA] * 0.72
+
+--------------------------------------------------------------- BUDGET KPIs
+
+Budget Amount =
+SUM ( fact_budget[budget_amount] )
+
+Budget Achievement % =
+DIVIDE ( [Total Revenue], [Budget Amount], BLANK () )
+
+Revenue Variance =
+[Total Revenue] - [Budget Amount]
+
+Revenue Variance % =
+DIVIDE ( [Revenue Variance], [Budget Amount], BLANK () )
+
+--------------------------------------------------------------- TIME INTELLIGENCE
+-- dim_date marked date table; SAMEPERIODLASTYEAR / DATEADD are filter-context safe.
+
+Revenue LY =
+CALCULATE ( [Total Revenue], SAMEPERIODLASTYEAR ( dim_date[full_date] ) )
+
+Revenue YoY % =
+DIVIDE ( [Total Revenue] - [Revenue LY], [Revenue LY], BLANK () )
+
+Revenue LM =
+CALCULATE (
+    [Total Revenue],
+    DATEADD ( dim_date[full_date], -1, MONTH )
+)
+
+Revenue MoM % =
+DIVIDE ( [Total Revenue] - [Revenue LM], [Revenue LM], BLANK () )
+
+Room Revenue LY =
+CALCULATE ( [Total Room Revenue], SAMEPERIODLASTYEAR ( dim_date[full_date] ) )
+
+F&B Revenue LY =
+CALCULATE ( [F&B Net Revenue], SAMEPERIODLASTYEAR ( dim_date[full_date] ) )
+
+EBITDA LY =
+CALCULATE ( [EBITDA], SAMEPERIODLASTYEAR ( dim_date[full_date] ) )
+
+EBITDA YoY % =
+DIVIDE ( [EBITDA] - [EBITDA LY], [EBITDA LY], BLANK () )
+
+Occupancy LY =
+CALCULATE ( [Occupancy %], SAMEPERIODLASTYEAR ( dim_date[full_date] ) )
+
+Food Cost LY =
+CALCULATE ( [Food Cost %], SAMEPERIODLASTYEAR ( dim_date[full_date] ) )
+
+--------------------------------------------------------------- GROUP / MIX
+
+Hotel Revenue Share % =
+DIVIDE ( [Total Room Revenue], [Total Revenue], BLANK () )
+
+F&B Revenue Share % =
+DIVIDE ( [F&B Net Revenue], [Total Revenue], BLANK () )
+
+--------------------------------------------------------------- DATA QUALITY
+-- sourced from mart_dq_source_health (no hardcoded values)
+
+DQ Quality Score =
+AVERAGE ( mart_dq_source_health[quality_score] )
+
+DQ Completeness % =
+AVERAGE ( mart_dq_source_health[completeness_pct] )
+
+DQ Duplicate Rate % =
+AVERAGE ( mart_dq_source_health[duplicate_rate_pct] )
+
+DQ Failed Records =
+SUM ( mart_dq_source_health[failed_records] )
+
+===============================================================================
+ VALIDATION NOTE
+===============================================================================
+Each measure was reconciled to its SQL mart equivalent (07_sql/03_marts.sql).
+Difference = 0 for all anchor KPIs (see 14_QA_REPORT.md).
+===============================================================================

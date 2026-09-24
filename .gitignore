@@ -1,0 +1,6 @@
+*.csv
+*.parquet
+*.xlsx
+*.zip
+dashboard/dist/
+dashboard/node_modules/
