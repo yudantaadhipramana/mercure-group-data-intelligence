@@ -1,16 +1,17 @@
-const SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbxsPqQh4n3IgslPDrtcAW6Ad8BSiEwtn436oS0frJ0_kQVeDc4ZiHqz7Tv8fD2pb_ehuQ/exec";
+const DATA_URL =
+  "https://raw.githubusercontent.com/yudantaadhipramana/mercure-group-data-intelligence/main/09_dashboard/dashboard_data.json";
 
-async function get(action: string) {
-  const res = await fetch(`${SCRIPT_URL}?action=${action}`, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Failed to fetch ${action}`);
-  return res.json();
+async function getJson(path: string) {
+  const res = await fetch(DATA_URL, { cache: "no-store" });
+  if (!res.ok) throw new Error("Failed to fetch dashboard data");
+  const json = await res.json();
+  return json[path] ?? [];
 }
 
-export const fetchKpi = () => get("kpi");
-export const fetchRevenue = () => get("revenue");
-export const fetchProperty = () => get("property");
-export const fetchFnb = () => get("fnb");
-export const fetchQuality = () => get("quality");
-export const fetchForecast = () => get("forecast");
-export const fetchAnomaly = () => get("anomaly");
+export const fetchKpi = () => getJson("kpi");
+export const fetchRevenue = () => getJson("revenue");
+export const fetchProperty = () => getJson("property");
+export const fetchFnb = () => getJson("fnb");
+export const fetchQuality = () => getJson("quality");
+export const fetchForecast = () => Promise.resolve([]);
+export const fetchAnomaly = () => Promise.resolve([]);
