@@ -1,4 +1,4 @@
-const DATA_URL = "/api/data";
+const DATA_URL = "/api/data/";
 
 async function getJson(path: string) {
   const res = await fetch(DATA_URL, { cache: "no-store" });

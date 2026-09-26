@@ -39,8 +39,10 @@ A full-stack data intelligence demo for a fictional hospitality & F&B group was 
 - Tests: 9/9 passed.
 
 ## H. Vercel
-- Deployment not performed; blocked due to unverified Vercel auth.
-- Build artifact ready at `dashboard/dist/` for manual upload or `vercel --prod` once authenticated.
+- Deployed to Vercel production.
+- Live URL: https://dashboard-2rym8x35u-lensadata.vercel.app/
+- API data endpoint: https://dashboard-2rym8x35u-lensadata.vercel.app/api/data/
+- Build artifact: `dashboard/dist/`
 
 ## I. QA
 - Pipeline tests: 9 passed.
@@ -50,7 +52,7 @@ A full-stack data intelligence demo for a fictional hospitality & F&B group was 
 
 ## J. Known Limitations
 - Google Sheets/Apps Script rebuild not pushed (OAuth not configured).
-- Vercel deployment not performed (auth not confirmed).
+- Vercel deployment completed: https://dashboard-2rym8x35u-lensadata.vercel.app/
 - Static dashboard is local/export-only until deployed.
 
 ## K. Next Steps
