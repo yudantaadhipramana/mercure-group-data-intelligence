@@ -306,3 +306,53 @@ def clean_budget(df: pd.DataFrame, map_prop, dim_acc, map_acc) -> pd.DataFrame:
     df["budget_month"] = df["period_start"].dt.month
     print(f"[35] BUDGET {n0:,} → {len(df):,}")
     return df
+
+
+def main():
+    import json
+    os.makedirs(P.CLN_DIR, exist_ok=True)
+
+    # load master data
+    dim_seg = pd.read_parquet(os.path.join(P.MST_DIR, "dim_customer_segment.parquet"))
+    dim_ch = pd.read_parquet(os.path.join(P.MST_DIR, "dim_channel.parquet"))
+    dim_rt = pd.read_parquet(os.path.join(P.MST_DIR, "dim_room_type.parquet"))
+    dim_acc = pd.read_parquet(os.path.join(P.MST_DIR, "dim_account.parquet"))
+    dim_sup = pd.read_parquet(os.path.join(P.MST_DIR, "dim_supplier.parquet"))
+    dim_prod = pd.read_parquet(os.path.join(P.MST_DIR, "dim_product.parquet"))
+    map_prop = pd.read_parquet(os.path.join(P.MST_DIR, "map_property_alias.parquet"))
+    map_prod = pd.read_parquet(os.path.join(P.MST_DIR, "map_product_alias.parquet"))
+    map_acc = pd.read_parquet(os.path.join(P.MST_DIR, "map_account_alias.parquet"))
+    map_cat = pd.read_parquet(os.path.join(P.MST_DIR, "map_category_alias.parquet"))
+
+    pms = clean_pms(pd.read_parquet(os.path.join(P.STG_DIR, "stg_pms.parquet")), map_prop, dim_seg, dim_ch, dim_rt)
+    pos = clean_pos(pd.read_parquet(os.path.join(P.STG_DIR, "stg_pos.parquet")), map_prop, map_prod, dim_prod)
+    fin = clean_finance(pd.read_parquet(os.path.join(P.STG_DIR, "stg_finance.parquet")), map_prop, dim_acc, map_acc, {})
+    inv = clean_inventory(pd.read_parquet(os.path.join(P.STG_DIR, "stg_inventory.parquet")), map_prop, map_prod)
+    pro = clean_procurement(pd.read_parquet(os.path.join(P.STG_DIR, "stg_procurement.parquet")), map_prop, map_prod, dim_sup)
+    bud = clean_budget(pd.read_parquet(os.path.join(P.STG_DIR, "stg_budget.parquet")), map_prop, dim_acc, map_acc)
+
+    pms.to_parquet(os.path.join(P.CLN_DIR, "clean_pms.parquet"), index=False)
+    pos.to_parquet(os.path.join(P.CLN_DIR, "clean_pos.parquet"), index=False)
+    fin.to_parquet(os.path.join(P.CLN_DIR, "clean_finance.parquet"), index=False)
+    inv.to_parquet(os.path.join(P.CLN_DIR, "clean_inventory.parquet"), index=False)
+    pro.to_parquet(os.path.join(P.CLN_DIR, "clean_procurement.parquet"), index=False)
+    bud.to_parquet(os.path.join(P.CLN_DIR, "clean_budget.parquet"), index=False)
+
+    # save cleansing log
+    log_df = pd.DataFrame(LOG_ROWS)
+    log_df.to_parquet(os.path.join(P.CLN_DIR, "cleansing_log.parquet"), index=False)
+
+    # row counts
+    counts = {
+        "pms": len(pms), "pos": len(pos), "finance": len(fin),
+        "inventory": len(inv), "procurement": len(pro), "budget": len(bud),
+        "cleansing_rules": len(log_df),
+    }
+    with open(os.path.join(P.CLN_DIR, "row_counts.json"), "w", encoding="utf-8") as fh:
+        json.dump(counts, fh, indent=2)
+    print(f"[35] cleansing log rules: {len(log_df)}")
+    print("[35] DONE")
+
+
+if __name__ == "__main__":
+    main()

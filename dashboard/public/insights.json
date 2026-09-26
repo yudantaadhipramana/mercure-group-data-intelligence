@@ -1,0 +1,42 @@
+[
+  {
+    "metric": "Total Revenue",
+    "value": 507.25,
+    "unit": "IDR bn",
+    "period": "2025-2026",
+    "comparison": "YoY growth +0.0%",
+    "evidence": "Top property: Mercure Grand Malang (122.33bn); bottom: Mercure Grand Semarang (41.69bn).",
+    "interpretation": "Revenue is diversified across hotel and F&B business units.",
+    "investigation": "Investigate revenue per available room and F&B average check variance."
+  },
+  {
+    "metric": "EBITDA",
+    "value": 109.96,
+    "unit": "IDR bn",
+    "period": "2025-2026",
+    "comparison": "Margin 21.7%",
+    "evidence": "Computed from revenue minus COGS and OPEX from the warehouse.",
+    "interpretation": "EBITDA margin reflects the combined effect of room revenue and F&B gross margin.",
+    "investigation": "Drill into properties with EBITDA below group average."
+  },
+  {
+    "metric": "Occupancy / ADR / RevPAR",
+    "value": "36.1% / 1669k / 175k",
+    "unit": "",
+    "period": "2025-2026",
+    "comparison": "Group average.",
+    "evidence": "Occupancy is derived from rooms sold over available room nights.",
+    "interpretation": "Average occupancy and rate performance across hotels.",
+    "investigation": "Check seasonality and long-weekend lift."
+  },
+  {
+    "metric": "F&B Food Cost %",
+    "value": 32.1,
+    "unit": "%",
+    "period": "2025-2026",
+    "comparison": "Target <32.0%",
+    "evidence": "Aggregated F&B COGS over net F&B revenue.",
+    "interpretation": "Food cost is within target if below threshold; investigate outliers.",
+    "investigation": "Review procurement price trends and waste by outlet."
+  }
+]

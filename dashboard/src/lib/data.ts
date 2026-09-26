@@ -1,5 +1,4 @@
-const DATA_URL =
-  "https://raw.githubusercontent.com/yudantaadhipramana/mercure-group-data-intelligence/main/09_dashboard/dashboard_data.json";
+const DATA_URL = "/api/data";
 
 async function getJson(path: string) {
   const res = await fetch(DATA_URL, { cache: "no-store" });
@@ -9,9 +8,9 @@ async function getJson(path: string) {
 }
 
 export const fetchKpi = () => getJson("kpi");
-export const fetchRevenue = () => getJson("revenue");
-export const fetchProperty = () => getJson("property");
-export const fetchFnb = () => getJson("fnb");
-export const fetchQuality = () => getJson("quality");
+export const fetchRevenue = () => getJson("daily_trend");
+export const fetchProperty = () => getJson("properties");
+export const fetchFnb = () => getJson("fnb_category");
+export const fetchQuality = () => getJson("dq");
 export const fetchForecast = () => Promise.resolve([]);
 export const fetchAnomaly = () => Promise.resolve([]);
