@@ -69,3 +69,18 @@ A full-stack data intelligence demo for a fictional hospitality & F&B group was 
 - Dashboard rebuilt as multi-page Next.js app with role-aware navigation: Executive, Property, Hotel, F&B, Finance, Inventory, Quality, Forecast/Anomaly.
 - KPI cards, charts, and tables now use premium hospitality glass design.
 - New branch: `rebuild-v2-2026-09-26`.
+
+## v3 Rebuild
+
+Branch: `rebuild-v3-2026-09-26`
+Live URL: https://dashboard-d4d08wvee-lensadata.vercel.app
+
+### What Changed
+- Multi-source raw data with **genuinely different schemas, date formats, and number formats** per source system:
+  - PMS-HOTEL-01, PMS-HOTEL-02, PMS-HOTEL-03
+  - POS-FNB-01, POS-FNB-02
+  - ERP-FIN-01, INV-SYSTEM-01, PROCUREMENT-01, BUDGET-01
+- Dummy ETL standardizes all formats into a single canonical DuckDB warehouse with star schema and SQL marts.
+- Dashboard rebuilt with role-based pages (Executive, Property, Hotel, F&B, Finance, Inventory, Quality, Forecast).
+- Forecast and anomaly detection included.
+- Strategic insights with evidence and actions for BOD / Executive / Manager.

@@ -20,9 +20,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   const path = usePathname();
   return (
     <html lang="en">
-      <body className="antialiased bg-[#0b1121] text-slate-100">
+      <body className="antialiased bg-[#0b0f19] text-slate-100">
         <div className="flex min-h-screen">
-          <aside className={`${collapsed ? "w-16" : "w-64"} transition-all glass flex flex-col`}>
+          <aside className={`${collapsed ? "w-16" : "w-64"} transition-all duration-300 card flex flex-col m-3`}>
             <div className="p-6 border-b border-white/10">
               <div className="text-amber-100 font-light text-xl tracking-wider">LensaData</div>
               {!collapsed && <div className="text-xs text-slate-400 mt-1">Mercure Group Intelligence</div>}
@@ -32,7 +32,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 <Link
                   key={n.href}
                   href={n.href}
-                  className={`block px-4 py-3 rounded-lg text-sm ${path === n.href ? "bg-amber-500/20 text-amber-100" : "text-slate-300 hover:bg-white/5"}`}
+                  className={`block px-4 py-3 rounded-lg text-sm transition-colors ${path === n.href ? "bg-amber-500/20 text-amber-100 font-medium" : "text-slate-300 hover:bg-white/5"}`}
                 >
                   {n.label}
                 </Link>

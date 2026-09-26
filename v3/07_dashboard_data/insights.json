@@ -1,0 +1,42 @@
+[
+  {
+    "metric": "Total Revenue",
+    "value": 108.21,
+    "unit": "IDR bn",
+    "period": "2025-2026",
+    "comparison": "Group consolidated",
+    "evidence": "Top: Mercure Jakarta Gatot Subroto (58.03bn); Bottom: Gacoan Surabaya (0.00bn).",
+    "interpretation": "Revenue diversified across hotel and F&B units.",
+    "investigation": "Investigate RevPAR and average check variance."
+  },
+  {
+    "metric": "EBITDA",
+    "value": 27.85,
+    "unit": "IDR bn",
+    "period": "2025-2026",
+    "comparison": "Margin 25.7%",
+    "evidence": "Computed from revenue minus COGS and OPEX.",
+    "interpretation": "EBITDA margin reflects combined room and F&B gross margin.",
+    "investigation": "Drill into properties below group average."
+  },
+  {
+    "metric": "Occupancy / ADR / RevPAR",
+    "value": "50.5% / 134k / 104k",
+    "unit": "",
+    "period": "2025-2026",
+    "comparison": "Group average",
+    "evidence": "Occupancy from rooms sold over available rooms.",
+    "interpretation": "Average occupancy and rate performance across hotels.",
+    "investigation": "Check seasonality and long-weekend lift."
+  },
+  {
+    "metric": "F&B Food Cost %",
+    "value": 25.1,
+    "unit": "%",
+    "period": "2025-2026",
+    "comparison": "Target <28%",
+    "evidence": "Aggregated F&B COGS over net F&B revenue.",
+    "interpretation": "Food cost within target; investigate outliers.",
+    "investigation": "Review procurement price trends and waste by outlet."
+  }
+]

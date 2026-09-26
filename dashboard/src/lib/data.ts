@@ -1,19 +1,51 @@
-const DATA_URL = "/api/data/";
+const DATA_URL = "/dashboard_data.json";
 
-async function getJson(path: string) {
+let cached: any = null;
+
+export async function fetchDashboardData() {
+  if (cached) return cached;
   const res = await fetch(DATA_URL, { cache: "no-store" });
   if (!res.ok) throw new Error("Failed to fetch dashboard data");
-  const json = await res.json();
-  return json[path] ?? [];
+  cached = await res.json();
+  return cached;
 }
 
-export const fetchKpi = () => getJson("kpi");
-export const fetchRevenue = () => getJson("daily_trend");
-export const fetchProperty = () => getJson("properties");
-export const fetchFnb = () => getJson("fnb_category");
-export const fetchQuality = () => getJson("dq");
-export const fetchForecast = () => getJson("forecast");
-export const fetchAnomaly = () => getJson("anomalies");
-export const fetchInsights = () => getJson("insights");
-export const fetchFinance = () => getJson("finance");
-export const fetchInventory = () => getJson("inventory");
+export async function fetchKpi() {
+  return (await fetchDashboardData()).kpi ?? [];
+}
+
+export async function fetchRevenue() {
+  return (await fetchDashboardData()).daily_trend ?? [];
+}
+
+export async function fetchProperty() {
+  return (await fetchDashboardData()).properties ?? [];
+}
+
+export async function fetchFnb() {
+  return (await fetchDashboardData()).fnb_category ?? [];
+}
+
+export async function fetchQuality() {
+  return (await fetchDashboardData()).dq ?? [];
+}
+
+export async function fetchForecast() {
+  return (await fetchDashboardData()).forecast ?? [];
+}
+
+export async function fetchAnomaly() {
+  return (await fetchDashboardData()).anomalies ?? [];
+}
+
+export async function fetchInsights() {
+  return (await fetchDashboardData()).insights ?? [];
+}
+
+export async function fetchFinance() {
+  return (await fetchDashboardData()).finance ?? [];
+}
+
+export async function fetchInventory() {
+  return (await fetchDashboardData()).inventory ?? {};
+}
