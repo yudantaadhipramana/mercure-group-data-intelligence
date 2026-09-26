@@ -1,12 +1,12 @@
 {
-  "total_anomalies": 215,
+  "total_anomalies": 218,
   "metrics": {
-    "total_revenue": 170,
+    "total_revenue": 171,
     "occupancy_pct": 13,
+    "fnb_transactions": 11,
     "fnb_discount": 10,
-    "adr": 9,
-    "fnb_transactions": 7,
-    "food_cost_pct": 6
+    "food_cost_pct": 9,
+    "adr": 4
   },
-  "high_severity": 162
+  "high_severity": 161
 }

@@ -3,6 +3,16 @@
 :root {
   --background: #0b1121;
   --foreground: #f8fafc;
+  --navy: #0b1f3a;
+  --navy-light: #102a4c;
+  --gold: #c9a227;
+  --gold-soft: #e3c878;
+  --warm-white: #f7f4ee;
+  --charcoal: #2a2a2a;
+  --soft-gray: #8a8f98;
+  --good: #2e7d5b;
+  --warn: #b98218;
+  --bad: #b3402f;
 }
 
 @theme inline {
@@ -16,4 +26,10 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Inter, 'Segoe UI', Arial, sans-serif;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
 }

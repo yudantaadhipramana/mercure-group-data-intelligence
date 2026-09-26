@@ -1,56 +1,56 @@
 [
   {
     "source": "PMS",
-    "raw_rows": 142422,
-    "warehouse_rows": 136253,
-    "difference": 6169,
+    "raw_rows": 142901,
+    "warehouse_rows": 136931,
+    "difference": 5970,
     "tolerance": "< 5%",
     "status": "OK"
   },
   {
     "source": "POS",
-    "raw_rows": 1412143,
-    "warehouse_rows": 1402546,
-    "difference": 9597,
+    "raw_rows": 1416116,
+    "warehouse_rows": 1404931,
+    "difference": 11185,
     "tolerance": "< 5%",
     "status": "OK"
   },
   {
     "source": "Finance",
-    "raw_rows": 7515,
-    "warehouse_rows": 7439,
-    "difference": 76,
+    "raw_rows": 7490,
+    "warehouse_rows": 7415,
+    "difference": 75,
     "tolerance": "< 5%",
     "status": "OK"
   },
   {
     "source": "Inventory",
-    "raw_rows": 151777,
+    "raw_rows": 151698,
     "warehouse_rows": 151110,
-    "difference": 667,
+    "difference": 588,
     "tolerance": "< 5%",
     "status": "OK"
   },
   {
     "source": "Procurement",
-    "raw_rows": 16834,
-    "warehouse_rows": 16813,
-    "difference": 21,
+    "raw_rows": 16217,
+    "warehouse_rows": 16202,
+    "difference": 15,
     "tolerance": "< 5%",
     "status": "OK"
   },
   {
     "source": "Budget",
-    "raw_rows": 7185,
-    "warehouse_rows": 6789,
-    "difference": 396,
+    "raw_rows": 7836,
+    "warehouse_rows": 7413,
+    "difference": 423,
     "tolerance": "< 5%",
     "status": "OK"
   },
   {
     "source": "Room Revenue",
     "raw_rows": null,
-    "warehouse_rows": 200444156000.0,
+    "warehouse_rows": 201821620000.0,
     "difference": null,
     "tolerance": "5%",
     "status": "OK"
@@ -58,7 +58,7 @@
   {
     "source": "F&B Revenue",
     "raw_rows": null,
-    "warehouse_rows": 100039914748.34,
+    "warehouse_rows": 100416930187.95,
     "difference": null,
     "tolerance": "5%",
     "status": "OK"

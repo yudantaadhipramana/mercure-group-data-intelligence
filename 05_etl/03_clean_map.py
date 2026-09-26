@@ -288,13 +288,13 @@ def clean_budget(df: pd.DataFrame, map_prop, dim_acc, map_acc) -> pd.DataFrame:
     df["property_id"] = mapped[mapped.notna()].values
 
     am = dict(zip(map_acc["raw_alias"], map_acc["account_id"]))
-    df["account_id"] = df["account"].astype("string").map(am)
+    df["account_id"] = df["account_name"].astype("string").map(am)
     df = df[df["account_id"].notna()].reset_index(drop=True)
 
     # period → month start date (both "2025-01" and "Jan-2025" appear)
-    p = df["period"].astype("string")
-    iso = pd.to_datetime(p, format="%Y-%m", errors="coerce")
-    alt = pd.to_datetime(p, format="%b-%Y", errors="coerce")
+    p = df["period_date"].astype("string")
+    iso = pd.to_datetime(p, format="%Y-%m-%d", errors="coerce")
+    alt = pd.to_datetime(p, format="mixed", dayfirst=True, errors="coerce")
     df["period_start"] = iso.fillna(alt)
     df["budget_amount"] = pd.to_numeric(df["budget_amount"], errors="coerce")
     # department from account

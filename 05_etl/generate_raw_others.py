@@ -1,13 +1,6 @@
 """
 PHASE 5 — Synthetic raw data generation: Finance/ERP, Inventory, Procurement, Budget.
-
-Business linkages (not random):
-  Finance   : COGS accounts fed from F&B COGS; OPEX as ratio of revenue
-  Inventory : consumption derived from POS quantities; waste % of consumption
-              opening = prior closing; procurement refills to reorder coverage
-  Procurement: unit price drifts with inflation (drives food-cost trend + anomalies)
-  Budget    : planned number per property×dept×account×month with property optimism/pessimism
-All deliberately dirty.
+Now with explicit source-system variation.
 """
 from __future__ import annotations
 import sys, os
@@ -16,25 +9,36 @@ import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import params as P
-from raw_writers import fmt_date, fmt_num, messy, maybe_null, blank_row
+from raw_writers import fmt_date_for, fmt_num_for, messy, maybe_null
 
 all_props = [(p[0], p[1], p[2]) for p in P.PROPERTIES] + [(u[0], u[1], u[2]) for u in P.FNB_UNITS]
 HOTEL_IDS = [p[0] for p in P.PROPERTIES]
 FNB_IDS = [u[0] for u in P.FNB_UNITS]
 
+
+def source_for_finance() -> str:
+    return "ERP-FIN-01"
+
+
+def source_for_inventory() -> str:
+    return "INV-SYSTEM-01"
+
+
+def source_for_procurement() -> str:
+    return "PROCUREMENT-01"
+
+
+def source_for_budget() -> str:
+    return "BUDGET-01"
+
+
 # ============================================================ FINANCE / ERP
 def generate_finance() -> pd.DataFrame:
-    """One expense/COGS transaction per property × account × month, plus revenue recognition lines."""
     r = P.rng(303)
     rows = []
     seq = 0
-    # monthly revenue per property (reused to scale OPEX) — recompute the same way the
-    # hotel/F&B model does so finance is consistent with PMS/POS
-    for d in P.daterange():
-        pass
+    system = source_for_finance()
     monthly_rev: dict[tuple[str, int, int], float] = {}
-    # (computed later from facts; here we approximate with the same demand model so
-    #  finance expense lines scale with business activity)
     for pid, *_ in all_props:
         for d in pd.date_range(P.START_DATE, P.END_DATE, freq="MS"):
             f = P.date_factors(d.date())
@@ -50,7 +54,6 @@ def generate_finance() -> pd.DataFrame:
         for d in pd.date_range(P.START_DATE, P.END_DATE, freq="MS"):
             rev = monthly_rev[(pid, d.year, d.month)]
             for code, aname, atype, dept in P.ACCOUNTS:
-                # dirty: skip a few to create gaps; include invalid types occasionally
                 if r.random() < 0.02:
                     continue
                 atype_out = atype
@@ -71,19 +74,19 @@ def generate_finance() -> pd.DataFrame:
                     code_out = code + "X"
                 rows.append(dict(
                     transaction_id=f"GL{seq:08d}",
-                    transaction_date=fmt_date(d.date(), r),
+                    transaction_date=fmt_date_for(d.date(), r, system),
                     property=messy(alias, r),
+                    source_system=system,
                     account_code=code_out,
                     account_name=messy(aname, r),
                     department=messy(dict(P.DEPARTMENTS)[dept], r),
-                    amount=fmt_num(amount, r),
+                    amount=fmt_num_for(amount, r, system),
                     transaction_type=r.choice(["Debit", "Credit"]),
                 ))
                 if r.random() < P.P_DUP_TXN:
                     rows.append(dict(rows[-1]))
                 if r.random() < 0.002:
                     rows.append({c: None for c in rows[-1]})
-    # orphans: unknown property
     for i in range(int(len(rows) * P.P_UNKNOWN_PROPERTY * 2)):
         rows[r.integers(0, len(rows))]["property"] = "MG Solo"
     return pd.DataFrame(rows)
@@ -92,14 +95,13 @@ def generate_finance() -> pd.DataFrame:
 # ============================================================ INVENTORY
 def generate_inventory() -> pd.DataFrame:
     r = P.rng(404)
-    # subset of menu products tracked in inventory
     menu = [(i, cat, name, price, cost) for i, (cat, name, price, cost) in enumerate(P.MENU)]
     tracked = [m for m in menu if r.random() < P.POC_INV_PRODUCT_RATE]
     rows = []
-    # daily consumption per product (units) ~ POS-like demand
+    system = source_for_inventory()
     for pid, pname, city in all_props:
         alias = property_alias(pid, r)
-        stock = {m[0]: max(20.0, r.uniform(30, 90)) for m in tracked}   # opening stock units
+        stock = {m[0]: max(20.0, r.uniform(30, 90)) for m in tracked}
         for d in P.daterange():
             f = P.date_factors(d)
             for mi, cat, name, price, cost in tracked:
@@ -111,22 +113,22 @@ def generate_inventory() -> pd.DataFrame:
                 open_s = stock[mi]
                 close_s = max(0.0, open_s + purch - cons - waste)
                 stock[mi] = close_s
-                unit_cost = price * cost * (1 + P.INFLATION_DRIFT_YEARLY *
-                                            ((d - P.START_DATE).days / 365.0))
+                unit_cost = price * cost * (1 + P.INFLATION_DRIFT_YEARLY * ((d - P.START_DATE).days / 365.0))
                 if r.random() < P.P_NEG_QTY:
                     cons = -cons
                 rows.append(dict(
-                    inventory_date=fmt_date(d, r),
+                    inventory_date=fmt_date_for(d, r, system),
                     property=messy(alias, r),
+                    source_system=system,
                     product_code=f"PC{mi+1:03d}",
                     product_name=product_alias(name, r),
-                    opening_stock=fmt_num(open_s, r, 1),
-                    purchase_qty=fmt_num(purch, r, 1),
-                    transfer_qty="" if maybe_null(r, 0.03) else fmt_num(0.0, r, 1),
-                    consumption_qty=fmt_num(cons, r, 1),
-                    waste_qty=fmt_num(waste, r, 1),
-                    closing_stock=fmt_num(close_s, r, 1),
-                    stock_value=fmt_num(close_s * unit_cost, r),
+                    opening_stock=fmt_num_for(open_s, r, system, 1),
+                    purchase_qty="" if maybe_null(r, 0.03) else fmt_num_for(purch, r, system, 1),
+                    transfer_qty="" if maybe_null(r, 0.03) else fmt_num_for(0.0, r, system, 1),
+                    consumption_qty=fmt_num_for(cons, r, system, 1),
+                    waste_qty=fmt_num_for(waste, r, system, 1),
+                    closing_stock=fmt_num_for(close_s, r, system, 1),
+                    stock_value=fmt_num_for(close_s * unit_cost, r, system),
                 ))
                 if r.random() < P.P_DUP_TXN * 0.4:
                     rows.append(dict(rows[-1]))
@@ -134,53 +136,40 @@ def generate_inventory() -> pd.DataFrame:
 
 
 # ============================================================ PROCUREMENT
-def generate_procurement(inventory_source: pd.DataFrame) -> pd.DataFrame:
-    r = P.rng(505)
-    rows = []
-    seq = 0
-    sup = P.SUPPLIERS
-    purch = inventory_source[inventory_source["purchase_qty"].notna()]
-    return None  # placeholder — procurement derived in step below
-
-
 def generate_procurement_from_inventory(inv: pd.DataFrame) -> pd.DataFrame:
-    """One purchase line per (property, product, date) where purchase_qty > 0."""
     r = P.rng(505)
     rows = []
     seq = 0
+    system = source_for_procurement()
+    sup = P.SUPPLIERS
     inv = inv.copy()
     inv["_d"] = pd.to_datetime(inv["inventory_date"], format="mixed", dayfirst=True, errors="coerce")
-    inv["_p"] = inv["purchase_qty"].replace("", np.nan).str.replace(",", "").astype(float)
+    inv["_p"] = inv["purchase_qty"].replace("", np.nan).astype(str).str.replace(",", "").astype(float)
     sel = inv[inv["_p"] > 0]
     for _, row in sel.iterrows():
         seq += 1
-        s = sup_of(r)
+        s = sup[r.integers(0, len(sup))]
         qty = float(row["_p"])
-        unit = float(row["_unit_cost"]) if "_unit_cost" in row else 0.0
-        base = next((m[3] for m in P.MENU if False), 0.10)
-        unit_price = max(1000.0, qty and (float(row.get("stock_value", 0)) / qty) or 0) if False else None
-        # unit price reconstructed from stock value / qty when available, else base cost ratio
-        if unit_price is None:
-            name = str(row["product_name"]).strip().lower()
-            ratio = 0.28
-            price = 50000.0
-            for cat, nm, pr, cost in P.MENU:
-                if nm.lower() == name:
-                    ratio, price = cost, pr
-                    break
-            unit_price = price * ratio * (1 + P.INFLATION_DRIFT_YEARLY *
-                                          ((row["_d"].date() - P.START_DATE).days / 365.0))
+        name = str(row["product_name"]).strip().lower()
+        ratio = 0.28
+        price = 50000.0
+        for cat, nm, pr, cost in P.MENU:
+            if nm.lower() == name:
+                ratio, price = cost, pr
+                break
+        unit_price = price * ratio * (1 + P.INFLATION_DRIFT_YEARLY * ((row["_d"].date() - P.START_DATE).days / 365.0))
         total = qty * unit_price
         rows.append(dict(
             purchase_id=f"PO{seq:07d}",
-            purchase_date=fmt_date(row["_d"].date(), r),
+            purchase_date=fmt_date_for(row["_d"].date(), r, system),
             supplier=messy(s[1], r),
+            source_system=system,
             property=messy(row["property"], r),
             product_code=row["product_code"],
             product_name=row["product_name"],
-            quantity=fmt_num(qty, r, 1),
-            unit_price=fmt_num(unit_price, r),
-            total_amount=fmt_num(total, r),
+            quantity=fmt_num_for(qty, r, system, 1),
+            unit_price=fmt_num_for(unit_price, r, system),
+            total_amount=fmt_num_for(total, r, system),
         ))
         if r.random() < P.P_DUP_TXN:
             rows.append(dict(rows[-1]))
@@ -189,57 +178,56 @@ def generate_procurement_from_inventory(inv: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def sup_of(r) -> tuple:
-    return P.SUPPLIERS[r.integers(0, len(P.SUPPLIERS))]
-
-
 # ============================================================ BUDGET
 def generate_budget() -> pd.DataFrame:
     r = P.rng(606)
     rows = []
-    # property budget temperament: some beat budget, some miss
-    temper = {p[0]: float(r.normal(0.0, 0.07)) for p in all_props}
+    system = source_for_budget()
+    temperament = {}
+    for pid, *_ in all_props:
+        temperament[pid] = r.uniform(0.92, 1.08)
     for pid, pname, city in all_props:
         alias = property_alias(pid, r)
         for d in pd.date_range(P.START_DATE, P.END_DATE, freq="MS"):
             f = P.date_factors(d.date())
+            base_rev = (dict((p[0], p[4] * p[6] * p[7] * 1000) for p in P.PROPERTIES).get(pid, 95_000_000) * f * 30 * 0.72)
             for code, aname, atype, dept in P.ACCOUNTS:
-                if r.random() < 0.10:
+                if r.random() < 0.02:
                     continue
-                if pid in HOTEL_IDS:
-                    base = dict((p[0], p[4] * p[6] * p[7] * 1000) for p in P.PROPERTIES)[pid]
-                    rev = base * f * 30 * 0.72
-                else:
-                    rev = 95_000_000 * f * 30
                 if atype == "Revenue":
-                    amt = rev * (1 + temper[pid])
+                    amt = base_rev * (0.02 + 0.10 * r.random())
                 elif atype == "COGS":
-                    amt = rev * 0.115
+                    amt = base_rev * (0.09 + 0.05 * r.random())
                 else:
-                    amt = rev * (P.OPEX_TO_REVENUE / 22)
+                    amt = base_rev * (P.OPEX_TO_REVENUE / 22) * (0.6 + 0.8 * r.random())
+                amt = amt * temperament[pid]
+                seq = len(rows) + 1
                 rows.append(dict(
-                    period=r.choice([d.strftime("%Y-%m"), d.strftime("%b-%Y")]),
+                    budget_id=f"BD{seq:07d}",
+                    period_date=fmt_date_for(d.date(), r, system),
                     property=messy(alias, r),
+                    source_system=system,
+                    account_code=code,
+                    account_name=messy(aname, r),
                     department=messy(dict(P.DEPARTMENTS)[dept], r),
-                    account=messy(aname, r),
-                    budget_amount=fmt_num(amt, r),
+                    budget_amount=fmt_num_for(amt, r, system),
                 ))
     return pd.DataFrame(rows)
 
 
-# ============================================================ shared alias helpers
-def property_alias(pid: str, r: np.random.Generator) -> str:
+def property_alias(pid: str, r) -> str:
     for pid_, name, city, *_ in P.PROPERTIES:
         if pid_ == pid:
-            return r.choice([name, name.upper(), P.NAME_SHORT.get(name, name),
-                             f"MG {city}", name.replace(" ", "-")])
-    for uid, name, city, *_ in P.FNB_UNITS:
+            short = P.NAME_SHORT.get(name, name)
+            variants = [name, name.upper(), short, f"MG {P.CITY_SHORT[city]}", name.replace(" ", "-")]
+            return r.choice(variants)
+    for uid, uname, city, *_ in P.FNB_UNITS:
         if uid == pid:
-            return r.choice([name, name.upper(), name.replace(" ", "-"), f"MG {city}"])
+            return uname
     return pid
 
 
-def product_alias(name: str, r: np.random.Generator) -> str:
+def product_alias(name: str, r) -> str:
     v = r.random()
     if v < 0.45:
         return name
@@ -254,31 +242,17 @@ def product_alias(name: str, r: np.random.Generator) -> str:
 
 # ============================================================ main
 def main():
-    os.makedirs(P.RAW_DIRS["finance"], exist_ok=True)
-    os.makedirs(P.RAW_DIRS["inventory"], exist_ok=True)
-    os.makedirs(P.RAW_DIRS["procurement"], exist_ok=True)
-    os.makedirs(P.RAW_DIRS["budget"], exist_ok=True)
-
-    print("[gen] Finance/ERP ...", flush=True)
+    for d in [P.RAW_DIRS["finance"], P.RAW_DIRS["inventory"], P.RAW_DIRS["procurement"], P.RAW_DIRS["budget"]]:
+        os.makedirs(d, exist_ok=True)
     fin = generate_finance()
-    fin.to_csv(os.path.join(P.RAW_DIRS["finance"], "erp_transactions_raw.csv"), index=False)
-    print(f"[gen] finance rows = {len(fin):,}")
-
-    print("[gen] Inventory ...", flush=True)
     inv = generate_inventory()
-    inv.to_csv(os.path.join(P.RAW_DIRS["inventory"], "inventory_daily_raw.csv"), index=False)
-    print(f"[gen] inventory rows = {len(inv):,}")
-
-    print("[gen] Procurement ...", flush=True)
     proc = generate_procurement_from_inventory(inv)
-    proc.to_csv(os.path.join(P.RAW_DIRS["procurement"], "procurement_raw.csv"), index=False)
-    print(f"[gen] procurement rows = {len(proc):,}")
-
-    print("[gen] Budget ...", flush=True)
     bud = generate_budget()
+    fin.to_csv(os.path.join(P.RAW_DIRS["finance"], "erp_transactions_raw.csv"), index=False)
+    inv.to_csv(os.path.join(P.RAW_DIRS["inventory"], "inventory_daily_raw.csv"), index=False)
+    proc.to_csv(os.path.join(P.RAW_DIRS["procurement"], "procurement_raw.csv"), index=False)
     bud.to_csv(os.path.join(P.RAW_DIRS["budget"], "budget_raw.csv"), index=False)
-    print(f"[gen] budget rows = {len(bud):,}")
-    print("[gen] DONE")
+    print(f"[gen] FIN {len(fin):,} INV {len(inv):,} PROC {len(proc):,} BUD {len(bud):,}")
 
 
 if __name__ == "__main__":

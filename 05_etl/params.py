@@ -8,6 +8,20 @@ import numpy as np
 from datetime import date, timedelta
 
 # ---------------------------------------------------------------- determinism
+# ---------------------------------------------------------------- source systems (synthetic)
+# Each branch may run a different POS/ERP system with its own schema and dirty quirks.
+SOURCE_SYSTEMS = {
+    "PMS-HOTEL-01": {"properties": ["H001", "H003", "H005"], "date_fmt": "%Y-%m-%d", "dec_style": "id"},
+    "PMS-HOTEL-02": {"properties": ["H002", "H004"], "date_fmt": "%d/%m/%Y", "dec_style": "en"},
+    "PMS-HOTEL-03": {"properties": ["H006", "H007"], "date_fmt": "%d-%b-%Y", "dec_style": "plain"},
+    "POS-FNB-01": {"outlets": ["O01", "O03", "O05", "O07", "O08", "O09", "O10"], "date_fmt": "%Y-%m-%d", "dec_style": "id"},
+    "POS-FNB-02": {"outlets": ["O02", "O04", "O06", "O11", "O12", "O13", "O14"], "date_fmt": "%d/%m/%Y", "dec_style": "en"},
+    "ERP-FIN-01": {"properties": "all", "date_fmt": "%Y-%m-%d", "dec_style": "id"},
+    "INV-SYSTEM-01": {"properties": "all", "date_fmt": "%d/%m/%Y", "dec_style": "en"},
+    "PROCUREMENT-01": {"properties": "all", "date_fmt": "%Y-%m-%d", "dec_style": "plain"},
+    "BUDGET-01": {"properties": "all", "date_fmt": "%Y-%m-%d", "dec_style": "id"},
+}
+
 SEED = 20260924
 
 # ---------------------------------------------------------------- calendar

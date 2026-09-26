@@ -50,3 +50,29 @@ def maybe_null(rng: np.random.Generator, p: float = P.P_NULL) -> bool:
 
 def blank_row(rng: np.random.Generator, p: float = 0.004) -> bool:
     return bool(rng.random() < p)
+
+# ------------------------------------------------------------------ source-system aware helpers
+def fmt_date_for(d: date, rng: np.random.Generator, system: str = None) -> str:
+    """Emit date in the format preferred by a source system, with occasional noise."""
+    if system and system in P.SOURCE_SYSTEMS:
+        fmt = P.SOURCE_SYSTEMS[system]["date_fmt"]
+        # occasional cross-system noise
+        if rng.random() < 0.05:
+            fmt = rng.choice(P.DATE_FORMATS)
+        return d.strftime(fmt)
+    return fmt_date(d, rng)
+
+
+def fmt_num_for(v: float, rng: np.random.Generator, system: str = None, dp: int = 2) -> str:
+    """Emit number in the decimal style preferred by a source system, with occasional noise."""
+    style = None
+    if system and system in P.SOURCE_SYSTEMS:
+        style = P.SOURCE_SYSTEMS[system]["dec_style"]
+        if rng.random() < 0.05:
+            style = rng.choice(P.DECIMAL_STYLES)
+    s = f"{abs(v):,.{dp}f}"
+    if style == "id":
+        return ("-" if v < 0 else "") + s.replace(",", "|").replace(".", ",").replace("|", ".")
+    if style == "en":
+        return ("-" if v < 0 else "") + s
+    return ("-" if v < 0 else "") + s.replace(",", "")

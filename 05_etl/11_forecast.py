@@ -25,12 +25,12 @@ def main():
             FROM mart_kpi_daily GROUP BY 1 ORDER BY 1
         """).fetch_df()
     df["date"] = pd.to_datetime(df["date"])
-    df = df.set_index("date").asfreq("D").fillna(0)
-    # Build forecast horizon
+    # Use only actual historical dates (2025-2026) for baseline
+    hist = df[df["date"] <= pd.Timestamp(P.END_DATE)].copy()
+    hist = hist.set_index("date").asfreq("D").fillna(0)
     future_dates = pd.date_range(P.FC_START, P.FC_END, freq="D")
-    # Simple baseline: last 30-day rolling average plus day-of-week and month factors
-    recent = float(df["revenue"].rolling(30, min_periods=1).mean().iloc[-1])
-    recent_fnb = float(df["fnb"].rolling(30, min_periods=1).mean().iloc[-1])
+    recent = float(hist["revenue"].rolling(30, min_periods=1).mean().iloc[-1])
+    recent_fnb = float(hist["fnb"].rolling(30, min_periods=1).mean().iloc[-1])
     rows = []
     for d in future_dates:
         f = P.DOW_FACTOR[d.weekday()] * P.MONTH_FACTOR[d.month] * (P.YEAR_UPLIFT.get(d.year, 1.12))
@@ -42,7 +42,6 @@ def main():
         })
     out = pd.DataFrame(rows)
     out.to_csv(os.path.join(OUT_DIR, "forecast_90d.csv"), index=False)
-    # summary JSON
     summary = {
         "horizon_days": len(future_dates),
         "start": future_dates[0].strftime("%Y-%m-%d"),

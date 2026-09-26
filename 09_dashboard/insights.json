@@ -1,27 +1,27 @@
 [
   {
     "metric": "Total Revenue",
-    "value": 507.25,
+    "value": 502.45,
     "unit": "IDR bn",
     "period": "2025-2026",
     "comparison": "YoY growth +0.0%",
-    "evidence": "Top property: Mercure Grand Malang (122.33bn); bottom: Mercure Grand Semarang (41.69bn).",
+    "evidence": "Top property: Mercure Grand Malang (122.91bn); bottom: Mercure Grand Semarang (42.48bn).",
     "interpretation": "Revenue is diversified across hotel and F&B business units.",
     "investigation": "Investigate revenue per available room and F&B average check variance."
   },
   {
     "metric": "EBITDA",
-    "value": 109.96,
+    "value": 108.48,
     "unit": "IDR bn",
     "period": "2025-2026",
-    "comparison": "Margin 21.7%",
+    "comparison": "Margin 21.6%",
     "evidence": "Computed from revenue minus COGS and OPEX from the warehouse.",
     "interpretation": "EBITDA margin reflects the combined effect of room revenue and F&B gross margin.",
     "investigation": "Drill into properties with EBITDA below group average."
   },
   {
     "metric": "Occupancy / ADR / RevPAR",
-    "value": "36.1% / 1669k / 175k",
+    "value": "36.3% / 1668k / 176k",
     "unit": "",
     "period": "2025-2026",
     "comparison": "Group average.",
