@@ -39,9 +39,9 @@ A full-stack data intelligence demo for a fictional hospitality & F&B group was 
 - Tests: 9/9 passed.
 
 ## H. Vercel
-- Deployed to Vercel production.
-- Live URL: https://dashboard-2rym8x35u-lensadata.vercel.app/
-- API data endpoint: https://dashboard-2rym8x35u-lensadata.vercel.app/api/data/
+- Deployed to Vercel production (v2).
+- Live URL: https://dashboard-37z1qrs4k-lensadata.vercel.app/
+- API data endpoint: https://dashboard-37z1qrs4k-lensadata.vercel.app/api/data/
 - Build artifact: `dashboard/dist/`
 
 ## I. QA
@@ -51,12 +51,21 @@ A full-stack data intelligence demo for a fictional hospitality & F&B group was 
 - Data quality: all sources Tier A.
 
 ## J. Known Limitations
-- Google Sheets/Apps Script rebuild not pushed (OAuth not configured).
-- Vercel deployment completed: https://dashboard-2rym8x35u-lensadata.vercel.app/
-- Static dashboard is local/export-only until deployed.
+- Google Sheets/Apps Script full modular rebuild not pushed (OAuth not configured; existing Code.gs remains in repo).
+- Vercel v2 deployment completed: https://dashboard-37z1qrs4k-lensadata.vercel.app/
+- Dashboard now supports multi-page role views; further polish on mobile/responsive interactions possible.
 
 ## K. Next Steps
 1. Configure Google OAuth and run `clasp push` for Apps Script.
 2. Authorize Vercel CLI (`vercel login`) and run `vercel --prod` from `dashboard/`.
 3. Connect GitHub branch to Vercel project for CI/CD.
 4. Add secrets to Vercel/Google as environment variables; never commit them.
+
+
+## M. V2 Rebuild Notes (2026-09-26)
+- Raw data now carries explicit source-system variation (PMS-HOTEL-01/02/03, POS-FNB-01/02, ERP-FIN-01, INV-SYSTEM-01, PROCUREMENT-01, BUDGET-01) per branch/POS/ERP differences.
+- Added `source_system` column to all raw files and per-system date/decimal formatting.
+- Forecast fixed to use only historical dates for baseline; now produces non-zero 90-day outlook.
+- Dashboard rebuilt as multi-page Next.js app with role-aware navigation: Executive, Property, Hotel, F&B, Finance, Inventory, Quality, Forecast/Anomaly.
+- KPI cards, charts, and tables now use premium hospitality glass design.
+- New branch: `rebuild-v2-2026-09-26`.
